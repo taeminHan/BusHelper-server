@@ -64,6 +64,7 @@ def Send(send_queue):
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
             elif re.findall(r"(Bus)$", category):
                 start, end = str(info[1]), str(info[2])
+                print(str(info[1]))
                 a = Api.Bus()
                 a.FindStation(start, end)
                 msg = a.FindRoute()
@@ -75,7 +76,7 @@ def Send(send_queue):
 def Recv(conn, count, send_queue):
     print('Thread Recv' + str(count) + ' Start')
     while True:
-        data = conn.recv(1024).decode('utf-8')
+        data = conn.recv(1024).decode()
         send_queue.put([data, conn, count])
         print(data)
 
