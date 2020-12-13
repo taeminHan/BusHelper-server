@@ -17,15 +17,23 @@ def Send(client_sock):
 def Recv(client_sock):
     while True:
         recv_data = client_sock.recv(1024).decode()  # Server -> Client 데이터 수신
-        if recv_data == '1':
-            print("탑승")
+        if recv_data == 'BBIk':
+            print("정상 승차")
             client = pymongo.MongoClient(
                 "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
             db = client.get_database('Register')
             col = db.get_collection('Login')
 
-        elif recv_data == '0':
-            print("잘못 탑승하셨습니다.")
+        elif recv_data == 'UnBBIk':
+            print("비정상 승차")
+            socket.close()
+
+        if recv_data == 'end_BBIk':
+            print("정상 하차")
+            client = pymongo.MongoClient(
+                "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
+            db = client.get_database('Register')
+            col = db.get_collection('Login')
 
 
 # TCP Client

@@ -5,6 +5,7 @@ import pymongo
 import re
 import Api
 
+
 def Send(send_queue):
     client = pymongo.MongoClient(
         "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
@@ -32,7 +33,8 @@ def Send(send_queue):
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
                     msg = '0'
-                    conn.sendto(msg.encode(), (client_ip, client_port))
+                    conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
+
 
             elif re.findall(r"(Register)$", category):  # 회원가입
                 sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[3]), 'CARD': str(info[4]),
@@ -54,21 +56,27 @@ def Send(send_queue):
                 else:
                     msg = '0'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
-            elif re.findall(r"(CARD)$", category): # 카드 단말기
+            elif re.findall(r"(CARD)$", category):  # 카드 단말기
                 doc = col.find({'CARD': str(info[1])})
                 if list(doc):
-                    msg = '1'
+                    msg = 'BBIk'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
-                    msg = '0'
+                    msg = 'UnBBIk'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
             elif re.findall(r"(Bus)$", category):
                 start, end = str(info[1]), str(info[2])
-                print(str(info[1]))
                 a = Api.Bus()
                 a.FindStation(start, end)
                 msg = a.FindRoute()
+                print(msg)
                 conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
+
+
+            elif re.findall(r"(Dummy)$", category):
+                if info[1] == '-1':
+                    pass
+                del (client_ip, client_port)
         except:
             pass
 
@@ -76,7 +84,7 @@ def Send(send_queue):
 def Recv(conn, count, send_queue):
     print('Thread Recv' + str(count) + ' Start')
     while True:
-        data = conn.recv(1024).decode()
+        data = conn.recv(1024).decode('utf-8')
         send_queue.put([data, conn, count])
         print(data)
 
