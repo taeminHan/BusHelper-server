@@ -2,9 +2,11 @@ import socket
 import threading
 import pymongo
 
+
 class Backend:
     def BusStack(self):
         pass
+
 
 def Send(client_sock):
     while True:
@@ -22,7 +24,7 @@ def Recv(client_sock):
             db = client.get_database('Register')
             col = db.get_collection('Login')
 
-        else:
+        elif recv_data == '0':
             print("잘못 탑승하셨습니다.")
 
 
@@ -30,7 +32,7 @@ def Recv(client_sock):
 if __name__ == '__main__':
     client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP Socket
     Host = '172.30.1.27'  # 통신할 대상의 IP 주소
-    Port = 9999  # 통신할 대상의 Port 주소
+    Port = 8080  # 통신할 대상의 Port 주소
     client_sock.connect((Host, Port))  # 서버로 연결시도
     print('Connecting to ', Host, Port)
 

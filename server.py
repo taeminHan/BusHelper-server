@@ -3,6 +3,7 @@ import threading
 from queue import Queue
 import pymongo
 import re
+import Api
 
 def Send(send_queue):
     client = pymongo.MongoClient(
@@ -62,7 +63,11 @@ def Send(send_queue):
                     msg = '0'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
             elif re.findall(r"(Bus)$", category):
-                pass
+                start, end = str(info[1]), str(info[2])
+                a = Api.Bus()
+                a.FindStation(start, end)
+                msg = a.FindRoute()
+                conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
         except:
             pass
 
@@ -79,7 +84,7 @@ if __name__ == '__main__':
 
     send_queue = Queue()
     HOST = '172.30.1.27'
-    PORT = 9999
+    PORT = 8080
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_sock.bind((HOST, PORT))
     server_sock.listen(10)
