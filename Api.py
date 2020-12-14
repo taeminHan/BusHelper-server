@@ -36,7 +36,7 @@ class Bus:
         client = pymongo.MongoClient(
             "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
         db = client.get_database('Register')
-        db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber)})
+        db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber),'station':str(routeStationId)})
 
         # 버스 번호, 탑승 하차 정류장
         return ''.join(routeBusNumber)
