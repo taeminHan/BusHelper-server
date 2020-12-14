@@ -39,7 +39,7 @@ class Bus:
         db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber)})
 
         # 버스 번호, 탑승 하차 정류장
-        return ':'.join(routeBusNumber + routeStationId)
+        return ''.join(routeBusNumber)
 
 
     def FindStation(self, a, b):

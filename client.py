@@ -21,10 +21,10 @@ def Recv(client_sock):
     db = client.get_database('Register')
     col = db.get_collection('Bus')
     while True:
-        recv_data = client_sock.recv(1024).decode()  # Server -> Client 데이터 수신
+        recv_data = client_sock.recv(1024).decode()
+        print(recv_data)# Server -> Client 데이터 수신
         if recv_data == 'BBIk':
-
-            if col.find_one():
+            if list(col.find({'Reservation': re.compile(r"\W")})):
                 print("정상 승차")
             else:
                 print("비정상 승차")
