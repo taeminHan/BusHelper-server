@@ -35,6 +35,7 @@ def Recv(client_sock):
             db.get_collection('Bus').delete_one({})
 
 
+
 # TCP Client
 if __name__ == '__main__':
     client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP Socket
