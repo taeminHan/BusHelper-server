@@ -3,6 +3,7 @@ import requests
 import re
 import pymongo
 
+
 class Bus:
 
     def __init__(self):
@@ -36,11 +37,10 @@ class Bus:
         client = pymongo.MongoClient(
             "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
         db = client.get_database('Register')
-        db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber),'station':str(routeStationId)})
+        db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber), 'station': str(routeStationId)})
 
         # 버스 번호, 탑승 하차 정류장
         return ''.join(routeBusNumber)
-
 
     def FindStation(self, a, b):
         self.start_station = a
