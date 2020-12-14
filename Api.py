@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-
+import pymongo
 
 class Bus:
 
@@ -33,8 +33,14 @@ class Bus:
         routeStationId = re.compile(r"(?<=\>)[A-Za-z0-9가-힣]+").findall(
             str(soup.select_one('itemlist').select('pathList>fname, tname')))
 
+        client = pymongo.MongoClient(
+            "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
+        db = client.get_database('Register')
+        db.get_collection('Bus').insert_one({'Reservation': str(routeBusNumber)})
+
         # 버스 번호, 탑승 하차 정류장
         return ':'.join(routeBusNumber + routeStationId)
+
 
     def FindStation(self, a, b):
         self.start_station = a

@@ -26,22 +26,22 @@ def Send(send_queue):
                 break
             info = recv[0].split(':')
             category = info[0]
-            if re.findall(r"(login)$", category):  # 로그인
-                doc = col.find({'ID': str(info[1]), 'PassWord': str(info[2])})  # MongoDB 로그인 정보 조회
-                if list(doc):
+            # 로그인
+            if re.findall(r"(login)$", category):
+                # MongoDB 로그인 정보 조회
+                if col.find({'ID': str(info[1]), 'PassWord': str(info[2])}):
                     msg = '1'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
                     msg = '0'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
 
-
-            elif re.findall(r"(Register)$", category):  # 회원가입
+            # 회원가입
+            elif re.findall(r"(Register)$", category):
                 sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[3]), 'CARD': str(info[4]),
                         'Phone': str(info[5])}
                 col.insert_one(sign)
-                doc = col.find(sign)
-                if list(doc):
+                if col.find(sign):
                     msg = '1'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
@@ -49,21 +49,20 @@ def Send(send_queue):
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
 
             elif re.findall(r"(Register_ID)$", category):  # 아이디 중복 검사
-                doc = col.find({'ID': str(info[1])})
-                if list(doc):
+                if col.find({'ID': str(info[1])}):
                     msg = '1'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
                     msg = '0'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
-            elif re.findall(r"(CARD)$", category):  # 카드 단말기
-                doc = col.find({'CARD': str(info[1])})
-                if list(doc):
+            elif re.findall("CARD", category):  # 카드 단말기
+                if info[1] == '1':
                     msg = 'BBIk'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
-                    msg = 'UnBBIk'
+                    msg = 'end_BBIk'
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
+                client.close()
             elif re.findall(r"(Bus)$", category):
                 start, end = str(info[1]), str(info[2])
                 a = Api.Bus()
@@ -71,12 +70,7 @@ def Send(send_queue):
                 msg = a.FindRoute()
                 print(msg)
                 conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
-
-
-            elif re.findall(r"(Dummy)$", category):
-                if info[1] == '-1':
-                    pass
-                del (client_ip, client_port)
+                client.close()
         except:
             pass
 

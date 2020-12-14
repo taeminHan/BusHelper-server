@@ -1,6 +1,7 @@
 import socket
 import threading
 import pymongo
+import re
 
 
 class Backend:
@@ -15,25 +16,23 @@ def Send(client_sock):
 
 
 def Recv(client_sock):
+    client = pymongo.MongoClient(
+        "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
+    db = client.get_database('Register')
+    col = db.get_collection('Bus')
     while True:
         recv_data = client_sock.recv(1024).decode()  # Server -> Client 데이터 수신
         if recv_data == 'BBIk':
-            print("정상 승차")
-            client = pymongo.MongoClient(
-                "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
-            db = client.get_database('Register')
-            col = db.get_collection('Login')
 
-        elif recv_data == 'UnBBIk':
-            print("비정상 승차")
-            socket.close()
+            if col.find_one():
+                print("정상 승차")
+            else:
+                print("비정상 승차")
+
 
         if recv_data == 'end_BBIk':
             print("정상 하차")
-            client = pymongo.MongoClient(
-                "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
-            db = client.get_database('Register')
-            col = db.get_collection('Login')
+            db.get_collection('Bus').delete_one({})
 
 
 # TCP Client
@@ -44,9 +43,9 @@ if __name__ == '__main__':
     client_sock.connect((Host, Port))  # 서버로 연결시도
     print('Connecting to ', Host, Port)
 
-    # Client의 메시지를 보낼 쓰레드
+    # Client 메시지를 보낼 쓰레드
     thread1 = threading.Thread(target=Send, args=(client_sock,))
     thread1.start()
-    # Server로 부터 다른 클라이언트의 메시지를 받을 쓰레드
+    # Server 부터 다른 클라이언트의 메시지를 받을 쓰레드
     thread2 = threading.Thread(target=Recv, args=(client_sock,))
     thread2.start()
