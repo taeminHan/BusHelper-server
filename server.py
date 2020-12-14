@@ -6,7 +6,7 @@ import re
 import Api
 
 
-def Send(send_queue, group):
+def Send(send_queue):
     client = pymongo.MongoClient(
         "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
     db = client.get_database('Register')
@@ -14,18 +14,12 @@ def Send(send_queue, group):
 
     while True:
         try:
-            print(len(group))
             recv = send_queue.get()
             # 클라이언트 IP, PORT 정규식 표현으로 처리
             client_ip = re.findall(r"(?<=raddr=\(\')\w+\.\w+\.\w+\.\w+", str(recv[1]))
             client_port = re.findall(r'\w+(?=\)>)', str(recv[1]))
             client_ip = str(client_ip[0])
             client_port = int(client_port[0])
-            ipG = []
-            portG = []
-            for i in group:
-                ipG.append(re.findall(r"(?<=raddr=\(\')\w+\.\w+\.\w+\.\w+", str(i)))
-                portG.append(re.findall(r'\w+(?=\)>)', str(i)))
 
             if recv == 'Group Changed':
                 print('Group Changed')
@@ -74,8 +68,7 @@ def Send(send_queue, group):
                 a = Api.Bus()
                 a.FindStation(start, end)
                 msg = a.FindRoute()
-                for i in group:
-                    i.send(msg.encode('utf-8'))
+                conn.send(msg.encode('utf-8'))
                 client.close()
         except:
             pass
@@ -106,11 +99,11 @@ if __name__ == '__main__':
         group.append(conn)
         print('Connected ' + str(addr))
         if count > 1:
-            thread1 = threading.Thread(target=Send, args=(send_queue,group, ))
+            thread1 = threading.Thread(target=Send, args=(send_queue, ))
             thread1.start()
             pass
         else:
-            thread1 = threading.Thread(target=Send, args=(send_queue, group, ))
+            thread1 = threading.Thread(target=Send, args=(send_queue, ))
             thread1.start()
 
         thread2 = threading.Thread(target=Recv, args=(conn, count, send_queue,))
