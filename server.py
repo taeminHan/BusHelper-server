@@ -38,8 +38,8 @@ def Send(send_queue, group):
 
             # 회원가입
             elif re.findall(r"(Register)$", category):
-                sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[3]),
-                        'CARD': str(info[4]),'Phone': str(info[5])}
+                sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[4]),
+                        'CARD':str(info[3]),'Age': str(info[5]), 'CARD':str(info[6]), 'Phone':str(info[7])}
 
                 col.insert_one(sign)
                 if list(col.find(sign)):
