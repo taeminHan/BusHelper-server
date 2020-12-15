@@ -8,8 +8,8 @@ class Bus:
 
     def __init__(self):
         self.key = 'KCCmg%2BFH81e74ptCVObbpItzvOWSM2dX1EDlZfXckrKdJUAS6DtQhI9VoIQCD9gUHRtIQ4Oo%2Br1Ph5YJIqVWlw%3D%3D'
-        self.Bus_url = 'http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBus'  # 경로
-        self.station_url = 'http://ws.bus.go.kr/api/rest/pathinfo/getLocationInfo'  # 정류장 정보 검색
+        self.Bus_url = 'http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBus'
+        self.station_url = 'http://ws.bus.go.kr/api/rest/pathinfo/getLocationInfo'
         self.ArrivalStation_url = 'http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll'
         self.startX, self.startY, self.endX, self.endY = '', '', '', ''
         self.start_station = ''
@@ -42,9 +42,9 @@ class Bus:
         # 버스 번호, 탑승 하차 정류장
         return ''.join(routeBusNumber)
 
-    def FindStation(self, a, b):
-        self.start_station = a
-        self.end_station = b
+    def FindStation(self, start_station, end_station):
+        self.start_station = start_station
+        self.end_station = end_station
         # 출발 정류장 번호 parse
         start_stationUrl = self.station_url + '?serviceKey=' + self.key + '&stSrch=' + self.start_station
         start_res = requests.get(start_stationUrl)

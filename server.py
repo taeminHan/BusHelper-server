@@ -8,7 +8,8 @@ import Api
 
 def Send(send_queue, group):
     client = pymongo.MongoClient(
-        "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
+        "mongodb+srv://Main:1q2w3e4r@cluster0.dbjal.gcp.mongodb.net/<dbname>"
+        "?retryWrites=true&w=majority")
     db = client.get_database('Register')
     col = db.get_collection('Login')
 
@@ -37,8 +38,9 @@ def Send(send_queue, group):
 
             # 회원가입
             elif re.findall(r"(Register)$", category):
-                sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[3]), 'CARD': str(info[4]),
-                        'Phone': str(info[5])}
+                sign = {'ID': str(info[1]), 'PassWord': str(info[2]), 'Name': str(info[3]),
+                        'CARD': str(info[4]),'Phone': str(info[5])}
+
                 col.insert_one(sign)
                 if list(col.find(sign)):
                     msg = '1'  # True
@@ -49,10 +51,10 @@ def Send(send_queue, group):
 
             elif re.findall(r"(Register_ID)$", category):  # 아이디 중복 검사
                 if list(col.find({'ID': str(info[1])})):
-                    msg = '0'  # True
+                    msg = '1'  # True
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
                 else:
-                    msg = '1'  # False
+                    msg = '0'  # False
                     conn.sendto(msg.encode('utf-8'), (client_ip, client_port))
             elif re.findall("CARD", category):  # 카드 단말기
                 if info[1] == '1':
